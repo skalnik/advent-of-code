@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-
 def sum_captcha(captcha)
   sum = 0
   captcha_chars = captcha.chars
