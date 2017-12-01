@@ -34,4 +34,4 @@ class Day1
   end
 end
 
-Day1.run ARGV[0]
+Day1.run File.read('input/day1.txt').chomp
