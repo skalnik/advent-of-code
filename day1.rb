@@ -1,14 +1,19 @@
 #!/usr/bin/env ruby
 
 class Day1
-  def self.run(input)
-    puts "Part 1: #{Day1.new.run(input, part: 1)}"
-    puts "Part 2: #{Day1.new.run(input, part: 2)}"
+  def self.run(input_file)
+    captcha = File.read(input_file).chomp
+    puts "Part 1: #{Day1.new(captcha).run(part: 1)}"
+    puts "Part 2: #{Day1.new(captcha).run(part: 2)}"
   end
 
-  def run(input, part: 1)
+  def initialize(captcha)
+    @captcha = captcha
+  end
+
+  def run(part: 1)
     sum = 0
-    captcha_chars = input.chars
+    captcha_chars = @captcha.chars
     captcha_chars.each_with_index do |digit, index|
       next_index = -1
       if part == 1
@@ -29,9 +34,8 @@ class Day1
   end
 
   def index_part_2(current_index, length)
-    distance_away = current_index + (length / 2)
-    distance_away % length
+    (current_index + (length / 2)) % length
   end
 end
 
-Day1.run File.read('input/day1.txt').chomp
+Day1.run 'input/day1.txt' if __FILE__ == $0
