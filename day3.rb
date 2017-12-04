@@ -9,57 +9,25 @@ class Day3
 
       current_val = size * size
       row, col, = 0, 0
-      current_dir = :right
 
       input_loc = [0, 0]
 
+      dir = 0
+      directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+
       while current_val > 1 do
-        case current_dir
-        when :right
-          loop do
-            spiral[row][col] = current_val
-            input_loc = [row, col] if current_val == number
+        spiral[row][col] = current_val
+        input_loc = [row, col] if current_val == number
+        next_loc = [row + directions[dir][0], col + directions[dir][1]]
 
-            break if col + 1 >= spiral[row].size || spiral[row][col + 1]
-
-            current_val -= 1
-            col += 1
-          end
-          current_dir = :down
-        when :down
-          loop do
-            spiral[row][col] = current_val
-
-            input_loc = [row, col] if current_val == number
-            break if row + 1 >= spiral.size || spiral[row + 1][col]
-
-            current_val -= 1
-            row += 1
-          end
-          current_dir = :left
-        when :left
-          loop do
-            spiral[row][col] = current_val
-
-            input_loc = [row, col] if current_val == number
-            break if col <= 0 || spiral[row][col - 1]
-
-            current_val -= 1
-            col -= 1
-          end
-          current_dir = :up
-        when :up
-          loop do
-            spiral[row][col] = current_val
-
-            input_loc = [row, col] if current_val == number
-            break if row <= 0 || spiral[row - 1][col]
-
-            current_val -= 1
-            row -= 1
-          end
-          current_dir = :right
+        if next_loc[0] >= spiral[row].size || next_loc[1] >= spiral.size ||
+            next_loc[0] < 0 || next_loc[1] < 0 || spiral[next_loc[0]][next_loc[1]]
+          dir = (dir + 1) % 4
         end
+
+        current_val -= 1
+        row += directions[dir][0]
+        col += directions[dir][1]
       end
 
       puts input_loc.inspect
