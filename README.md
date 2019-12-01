@@ -3,7 +3,7 @@
 
 My solutions for Advent of Code.
 
-2017 Ruby Template
+Ruby Template
 ------------------
 
 ```ruby
