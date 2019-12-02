@@ -13,13 +13,11 @@ class Day2
 
   def run(part: 1)
     if part == 1
-      new_intcode = Marshal.load(Marshal.dump(@intcode))
-      process(new_intcode, 12, 2)
+      process(@intcode.clone, 12, 2)
     else
       (0..99).each do |noun|
         (0..99).each do |verb|
-          new_intcode = Marshal.load(Marshal.dump(@intcode))
-          output = process(new_intcode, noun, verb)
+          output = process(@intcode.clone, noun, verb)
 
           return 100 * noun + verb if output == 19690720
         end
