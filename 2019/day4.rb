@@ -1,5 +1,5 @@
 def has_double?(value)
-  value = value.to_s =~ /(\d)\1/
+  value.to_s =~ /(\d)\1/
 end
 
 def no_decrease?(value)
