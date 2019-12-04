@@ -1,13 +1,5 @@
 def has_double?(value)
-  value = value.to_s
-
-  value.chars.each_with_index do |digit, index|
-    return false if index + 1  > value.length
-
-    return true if digit == value[index + 1]
-  end
-
-  false
+  value = value.to_s =~ /(\d)\1/
 end
 
 def no_decrease?(value)
