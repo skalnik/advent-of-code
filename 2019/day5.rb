@@ -104,4 +104,3 @@ class Day5
 end
 
 Day5.run 'input/day5.txt' if __FILE__ == $0
-
