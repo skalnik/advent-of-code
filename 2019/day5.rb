@@ -20,15 +20,11 @@ class Day5
 
   def process(intcode)
     position = 0
-    done = false
 
-    until done do
+    while true do
       instruction = intcode[position]
 
-      if instruction == 99
-        done = true
-        break
-      end
+      break if instruction == 99
 
       instruction = instruction.to_s.chars.map(&:to_i)
       opcode = instruction.pop
