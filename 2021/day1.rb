@@ -11,25 +11,16 @@ class Day1
   end
 
   def part_one
-    increases = 0
+    depths = nil
     File.open(@filename) do |file|
-      previous_depth = nil
-      file.each_line do |depth|
-        depth = Integer(depth)
-        if previous_depth
-          if depth > previous_depth
-            increases += 1
-          end
-        end
-        previous_depth = depth
-      end
+      depths = file.readlines.map { |x| Integer(x) }
     end
 
-    increases
+    increases(depths)
   end
 
   def part_two
-    increases = 0
+    depths = nil
     File.open(@filename) do |file|
       a = file.readlines.map { |x| Integer(x) }
       b = a.dup
@@ -44,21 +35,21 @@ class Day1
       c.shift
       c.shift
 
-      groups = [a, b, c].transpose.map(&:sum)
-
-      previous_depth = nil
-      groups.each do |depth|
-        if previous_depth
-          if depth > previous_depth
-            increases += 1
-          end
-        end
-        previous_depth = depth
-      end
+      depths = [a, b, c].transpose.map(&:sum)
     end
 
-    increases
+    increases(depths)
+  end
 
+  def increases(depths)
+    total = 0
+    previous_depth = depths.shift
+    depths.each do |depth|
+      total += 1 if depth > previous_depth
+      previous_depth = depth
+    end
+
+    total
   end
 end
 
