@@ -45,7 +45,7 @@ class Board
   attr_reader :points
 
   def initialize
-    @points = Hash.new { |h, k| h[k] = [] }
+    @points = Hash.new { |h, k| h[k] = 0 }
   end
 
   def add_line(line)
@@ -55,7 +55,7 @@ class Board
     x, y = line.a[:x], line.a[:y]
 
     loop do
-      @points[{x: x, y: y}] << line
+      @points[{x: x, y: y}] += 1
       break if x == line.b[:x] && y == line.b[:y]
 
       x += dx
@@ -64,7 +64,7 @@ class Board
   end
 
   def points_over_one
-    @points.values.count { |v| v.length > 1 }
+    @points.values.count { |v| v > 1 }
   end
 
   def inspect
