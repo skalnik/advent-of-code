@@ -13,6 +13,7 @@ class Day4
   def part_one
     numbers = nil
     boards = []
+
     File.open(@filename) do |file|
       lines = file.readlines(chomp: true).delete_if(&:empty?)
       numbers = lines.shift.split(",").map(&:to_i)
@@ -25,7 +26,9 @@ class Day4
     last_number = numbers[0]
     numbers.each do |number|
       break if boards.any?(&:won?)
+
       last_number = number
+
       boards.each do |board|
         board.mark(number)
       end
@@ -38,6 +41,7 @@ class Day4
   def part_two
     numbers = nil
     boards = []
+
     File.open(@filename) do |file|
       lines = file.readlines(chomp: true).delete_if(&:empty?)
       numbers = lines.shift.split(",").map(&:to_i)
@@ -70,10 +74,9 @@ class Board
     @rows = []
     rows.each do |row|
       values = row.split(/\s+/).delete_if(&:empty?).map(&:to_i)
-      values.map! do |v|
+      @rows << values.map do |v|
         { value: v, marked: false }
       end
-      @rows << values
     end
   end
 
