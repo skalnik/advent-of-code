@@ -75,8 +75,7 @@ end
 class Line
   attr_reader :a, :b
   def initialize(a, b)
-    @a = a
-    @b = b
+    @a, @b = a, b
   end
 
   def horizontal?
