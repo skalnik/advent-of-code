@@ -11,47 +11,32 @@ class Day7
   end
 
   def part_one
-    File.open(@filename) do |file|
-      positions = file.readlines[0].split(",").map(&:to_i)
-      min, max  = positions.min, positions.max
-
-      min_fuel_cost = max * positions.size
-
-      (min..max).each do |position|
-        fuel_cost = positions.inject(0) do |cost, crab|
-          cost += (crab - position).abs
-        end
-        if fuel_cost < min_fuel_cost
-          min_fuel_cost = fuel_cost
-        end
-      end
-
-      min_fuel_cost
+    positions = File.open(@filename) do |file|
+      file.readlines[0].split(",").map(&:to_i)
     end
+
+    min, max  = positions.min, positions.max
+
+    (min..max).map do |position|
+      positions.inject(0) do |cost, crab|
+        cost += (crab - position).abs
+      end
+    end.min
   end
 
   def part_two
-    File.open(@filename) do |file|
-      positions = file.readlines[0].split(",").map(&:to_i)
-      min, max  = positions.min, positions.max
-
-      min_fuel_cost = nil
-
-      (min..max).each do |position|
-        fuel_cost = positions.inject(0) do |cost, crab|
-          distance = (crab - position).abs
-          cost += distance * ((distance.to_f + 1) / 2)
-        end
-
-        min_fuel_cost = fuel_cost if min_fuel_cost.nil?
-
-        if fuel_cost < min_fuel_cost
-          min_fuel_cost = fuel_cost
-        end
-      end
-
-      min_fuel_cost
+    positions = File.open(@filename) do |file|
+      file.readlines[0].split(",").map(&:to_i)
     end
+
+    min, max  = positions.min, positions.max
+
+    (min..max).map do |position|
+      positions.inject(0) do |cost, crab|
+        distance = (crab - position).abs
+        cost += distance * ((distance.to_f + 1) / 2)
+      end
+    end.min
   end
 end
 
