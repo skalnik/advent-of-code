@@ -30,7 +30,7 @@ class Day7
     positions.min.upto(positions.max).map do |position|
       positions.inject(0) do |cost, crab|
         distance = (crab - position).abs
-        cost += distance * ((distance.to_f + 1) / 2)
+        cost += distance * (distance + 1) / 2
       end
     end.min
   end
