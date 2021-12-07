@@ -16,9 +16,9 @@ class Day7
     end
 
     positions.min.upto(positions.max).map do |position|
-      positions.inject(0) do |cost, crab|
-        cost += (crab - position).abs
-      end
+      positions.map do |crab|
+        (crab - position).abs
+      end.sum
     end.min
   end
 
@@ -28,10 +28,10 @@ class Day7
     end
 
     positions.min.upto(positions.max).map do |position|
-      positions.inject(0) do |cost, crab|
+      positions.map do |crab|
         distance = (crab - position).abs
-        cost += distance * (distance + 1) / 2
-      end
+        distance * (distance + 1) / 2
+      end.sum
     end.min
   end
 end
