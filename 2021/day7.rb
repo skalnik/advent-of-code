@@ -15,9 +15,7 @@ class Day7
       file.readlines[0].split(",").map(&:to_i)
     end
 
-    min, max  = positions.min, positions.max
-
-    (min..max).map do |position|
+    positions.min.upto(positions.max).map do |position|
       positions.inject(0) do |cost, crab|
         cost += (crab - position).abs
       end
@@ -29,9 +27,7 @@ class Day7
       file.readlines[0].split(",").map(&:to_i)
     end
 
-    min, max  = positions.min, positions.max
-
-    (min..max).map do |position|
+    positions.min.upto(positions.max).map do |position|
       positions.inject(0) do |cost, crab|
         distance = (crab - position).abs
         cost += distance * ((distance.to_f + 1) / 2)
