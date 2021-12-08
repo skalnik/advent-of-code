@@ -28,5 +28,9 @@ class DayN
   end
 end
 
-DayN.run 'input/dayN.txt' if __FILE__ == $0
+if ARGV.empty?
+  DayN.run 'input/dayN.txt'
+else
+  DayN.run 'test/dayN.txt'
+end
 ```
