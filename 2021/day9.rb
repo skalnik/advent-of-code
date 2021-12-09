@@ -25,7 +25,6 @@ class Day9
     end
 
     minimums = low_points(heightmap)
-    spots_to_check = [[-1, 0], [0, -1], [0, 1], [1, 0]]
 
     minimums.map do |minimum|
       seen = []
@@ -34,13 +33,12 @@ class Day9
         next if seen.include?(point)
         seen << point
 
-        spots_to_check.each do |diff|
-          new_point = Point.new(point.row + diff[0], point.col + diff[1])
-          next if new_point.row < 0 || new_point.col < 0 || new_point.row >= heightmap.length || new_point.col >= heightmap[0].length
+        point.possible_neighbors.each do |neighbor|
+          next if neighbor.out_of_bounds?(heightmap.length - 1, heightmap[0].length - 1)
+          neighbor.fill_depth(heightmap)
 
-          new_point.depth = heightmap[new_point.row][new_point.col]
-          if new_point.depth < 9 && !seen.include?(new_point)
-            to_visit << new_point
+          if neighbor.depth < 9 && !seen.include?(neighbor)
+            to_visit << neighbor
           end
         end
       end
