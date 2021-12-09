@@ -51,19 +51,16 @@ class Day9
 
   def low_points(grid)
     low_points = []
-    spots_to_check = [
-      [-1, 0], [0, -1], [0, 1], [1, 0]
-    ]
 
     grid.each_with_index do |row, r|
       row.each_with_index do |cell, c|
-        lowest = spots_to_check.map do |diff|
-          to_check = [r - diff[0], c - diff[1]]
-          next if to_check[0] < 0 || to_check[1] < 0 || to_check[0] >= grid.length || to_check[1] >= row.length
-          cell < grid[to_check[0]][to_check[1]]
+        point = Point.new(r, c, cell)
+        lowest = point.possible_neighbors.map do |neighbor|
+          next if neighbor.out_of_bounds?(grid.length - 1, grid[0].length - 1)
+          point.depth < neighbor.fill_depth(grid)
         end.compact.all?(true)
 
-        low_points << Point.new(r, c, cell) if lowest
+        low_points << point if lowest
       end
     end
 
@@ -81,6 +78,21 @@ class Point
 
   def ==(other)
     self.row == other.row && self.col == other.col
+  end
+
+  def possible_neighbors
+    neighboring = [ [-1, 0], [0, -1], [0, 1], [1, 0] ]
+    neighboring.map do |(dr, dc)|
+      Point.new(row + dr, col + dc)
+    end
+  end
+
+  def out_of_bounds?(max_row, max_col)
+    row < 0 || row > max_row || col < 0 || col > max_col
+  end
+
+  def fill_depth(grid)
+    @depth = grid[row][col]
   end
 
   def to_s
