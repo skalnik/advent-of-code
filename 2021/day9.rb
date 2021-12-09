@@ -11,20 +11,20 @@ class Day9
   end
 
   def part_one
-    heightmap = []
+    grid  = []
     File.open(@filename) do |file|
-      heightmap = file.readlines.map { |s| s.chomp.chars.map(&:to_i) }
+      grid = file.readlines.map { |s| s.chomp.chars.map(&:to_i) }
     end
-    low_points(heightmap).map(&:depth).map(&:next).sum
+    low_points(grid).map(&:depth).map(&:next).sum
   end
 
   def part_two
-    heightmap = []
+    grid = []
     File.open(@filename) do |file|
-      heightmap = file.readlines.map { |s| s.chomp.chars.map(&:to_i) }
+      grid = file.readlines.map { |s| s.chomp.chars.map(&:to_i) }
     end
 
-    minimums = low_points(heightmap)
+    minimums = low_points(grid)
 
     minimums.map do |minimum|
       seen = []
@@ -34,8 +34,8 @@ class Day9
         seen << point
 
         point.possible_neighbors.each do |neighbor|
-          next if neighbor.out_of_bounds?(heightmap.length - 1, heightmap[0].length - 1)
-          neighbor.fill_depth(heightmap)
+          next if neighbor.out_of_bounds?(grid.length - 1, grid[0].length - 1)
+          neighbor.fill_depth(grid)
 
           if neighbor.depth < 9 && !seen.include?(neighbor)
             to_visit << neighbor
