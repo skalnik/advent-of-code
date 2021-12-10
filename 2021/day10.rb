@@ -90,14 +90,11 @@ class Line
         25137
       end
     elsif incomplete?
-      score = 0
-      @chars_left.reverse.each do |char|
+      @chars_left.reverse.inject(0) do |score, char|
         score *= 5
         char_score = OPENERS.index(char) + 1
-        score += char_score
+        score + char_score
       end
-
-      score
     end
   end
 end
