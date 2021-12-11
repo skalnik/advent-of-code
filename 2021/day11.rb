@@ -16,12 +16,9 @@ class Day11
     File.open(@filename) do |file|
       octopi = Octopi.new(file.readlines(chomp: true).map(&:chars))
 
-      flashes = 0
-      100.times do
-        flashes += octopi.step
+      1.upto(100).inject(0) do |flashes, i|
+        flashes + octopi.step
       end
-
-      flashes
     end
   end
 
@@ -110,32 +107,27 @@ class Octopi
       flashing << octopus if octopus.flashing?
     end
 
-
     flashed = []
     while octopus = flashing.shift
       next if flashed.include? octopus
       flashed << octopus
 
       neighbors(octopus).each do |neighbor|
-        next if flashing.include?(neighbor)
-
         neighbor.increment
-
         flashing << neighbor if neighbor.flashing?
       end
     end
 
     # Finally, any octopus that flashed during this step has its energy level
     # set to 0, as it used all of its energy to flash.
-    flashes = 0
-    @grid.flatten.each do |octopus|
+    @grid.flatten.inject(0) do |flashes, octopus|
       if octopus.flashing?
-        flashes += 1
         octopus.flash!
+        flashes += 1
+      else
+        flashes
       end
     end
-
-    flashes
   end
 
   def neighbors(octopus)
