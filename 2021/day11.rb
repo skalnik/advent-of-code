@@ -26,6 +26,18 @@ class Day11
   end
 
   def part_two
+    File.open(@filename) do |file|
+      octopi = Octopi.new(file.readlines(chomp: true).map(&:chars))
+
+      flashes = 0
+      step = 0
+      while flashes < 100
+        flashes = octopi.step
+        step += 1
+      end
+
+      step
+    end
   end
 end
 
