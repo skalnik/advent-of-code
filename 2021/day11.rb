@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
-#
-require 'pry'
 
 class Day11
   def self.run(input_file)
