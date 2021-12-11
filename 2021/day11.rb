@@ -91,20 +91,16 @@ class Octopi
   end
 
   def step
+    flashing = []
+
     # First, the energy level of each octopus increases by 1.
-    @grid.each_with_index do |row, r|
-      row.each_with_index do |cell, c|
-        cell.increment
-      end
+    @grid.flatten.each do |octopus|
+      octopus.increment
+      flashing << octopus if octopus.flashing?
     end
 
     # Then, any octopus with an energy level greater than 9 flashes. If this
     # causes an octopus to have an energy level greater than 9, it also flashes.
-    flashing = []
-    @grid.flatten.each do |octopus|
-      flashing << octopus if octopus.flashing?
-    end
-
     flashed = []
     while octopus = flashing.shift
       next if flashed.include? octopus
