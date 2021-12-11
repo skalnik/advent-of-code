@@ -138,8 +138,7 @@ class Octopi
     ]
 
     neighbor_cells.map do |diff|
-      row = octopus.row + diff[0]
-      col = octopus.col + diff[1]
+      row, col = octopus.row + diff[0], octopus.col + diff[1]
       next if row < 0 || row >= grid.length || col < 0 || col >= grid[0].length
       @grid[row][col]
     end.compact
@@ -150,6 +149,7 @@ class Octopi
       row.each do |cell|
         print "#{cell.to_s} "
       end
+
       puts
     end
   end
