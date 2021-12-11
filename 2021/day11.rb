@@ -118,13 +118,9 @@ class Octopi
 
     # Finally, any octopus that flashed during this step has its energy level
     # set to 0, as it used all of its energy to flash.
-    @grid.flatten.inject(0) do |flashes, octopus|
-      if octopus.flashing?
-        octopus.flash!
-        flashes += 1
-      else
-        flashes
-      end
+    flashed.inject(0) do |flashes, octopus|
+      octopus.flash!
+      flashes + 1
     end
   end
 
