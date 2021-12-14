@@ -46,9 +46,9 @@ class Day13
     (0..max_x).each do |x|
       (0..max_y).each do |y|
         if points.include? [x, y]
-          print "#"
+          print "❎"
         else
-          print " "
+          print "🏴"
         end
       end
 
