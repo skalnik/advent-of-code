@@ -11,17 +11,17 @@ Ruby Template
 
 class DayN
   def self.run(input_file)
-    puts "Part 1: #{DayN.new(input_file).part_one}"
-    puts "Part 2: #{DayN.new(input_file).part_two}"
+    runner = DayN.new(input_file)
+    puts "Part 1: #{runner.part_one}"
+    puts "Part 2: #{runner.part_two}"
   end
 
   def initialize(filename)
-    @filename = filename
+    @input = File.readlines(filename, chomp: true)
   end
 
   def part_one
-    File.open(@filename) do |file|
-    end
+    @input
   end
 
   def part_two
