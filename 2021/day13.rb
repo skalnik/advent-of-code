@@ -55,15 +55,15 @@ class Day13
       puts
     end
   end
-end
 
-def fold_point(x, y, direction, amount)
-  if direction == :x && x > amount
-    [2 * amount - x, y]
-  elsif direction == :y && y > amount
-    [x, 2 * amount - y]
-  else
-    [x, y]
+  def fold_point(x, y, direction, amount)
+    if direction == :x && x > amount
+      [2 * amount - x, y]
+    elsif direction == :y && y > amount
+      [x, 2 * amount - y]
+    else
+      [x, y]
+    end
   end
 end
 
