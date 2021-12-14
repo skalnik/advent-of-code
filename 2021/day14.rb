@@ -22,24 +22,22 @@ class Day14
   end
 
   def part_one
-    polymer = @template.dup
+    polymer = Polymer.new(@template, @rules)
     10.times do
-      polymer = run_polymerizer(polymer)
+      polymer.run!
     end
 
-    occurances = polymer.chars.tally
+    occurances = polymer.string.chars.tally
     occurances.values.max - occurances.values.min
   end
 
   def part_two
-    counts = Hash.new(0)
-    @template.chars.each_cons(2) { |pair| counts[pair.join("")] += 1 }
-
+    polymer = FastPolymer.new(@template, @rules)
     40.times do
-      counts = run_counting_polymerizer(counts)
+      polymer.run!
     end
 
-    tally = counts.inject(Hash.new(0)) do |t, (pair, count)|
+    tally = polymer.counts.inject(Hash.new(0)) do |t, (pair, count)|
       t[pair[0]] += count
       t
     end
@@ -47,22 +45,41 @@ class Day14
 
     tally.values.max - tally.values.min
   end
+end
 
-  def run_polymerizer(polymer)
-    new_template = ""
-    polymer.chars.each_cons(2) do |con|
-      new_template << con[0]
-      if rule = @rules[con.join("")]
-        new_template << rule
-      end
-    end
-    new_template << polymer.chars.last
+class Polymer
+  attr_reader :string, :rules
 
-    new_template
+  def initialize(str, rules)
+    @string = str
+    @rules = rules
   end
 
-  def run_counting_polymerizer(pairs)
-    pairs.inject(Hash.new(0)) do |new_pairs, (pair, count)|
+  def run!
+    new_string = ""
+    @string.chars.each_cons(2) do |con|
+      new_string << con[0]
+      if rule = @rules[con.join("")]
+        new_string << rule
+      end
+    end
+    new_string << @string.chars.last
+
+    @string = new_string
+  end
+end
+
+class FastPolymer
+  attr_reader :counts, :rules
+
+  def initialize(str, rules)
+    @rules = rules
+    @counts = Hash.new(0)
+    str.chars.each_cons(2) { |pair| @counts[pair.join("")] += 1 }
+  end
+
+  def run!
+    @counts = @counts.inject(Hash.new(0)) do |new_pairs, (pair, count)|
       if rule = @rules[pair]
         new_pairs[pair[0] + rule] += count
         new_pairs[rule + pair[1]] += count
