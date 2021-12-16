@@ -23,17 +23,17 @@ class Day16
 end
 
 class Packet
-    @@TYPE_MAP = {
-      -1 => :corrupt,
-      0 => :sum,
-      1 => :product,
-      2 => :min,
-      3 => :max,
-      4 => :literal,
-      5 => :gt,
-      6 => :lt,
-      7 => :eq
-    }
+  @@TYPE_MAP = {
+    -1 => :corrupt,
+    0 => :sum,
+    1 => :product,
+    2 => :min,
+    3 => :max,
+    4 => :literal,
+    5 => :gt,
+    6 => :lt,
+    7 => :eq
+  }
 
   attr_reader :bits, :version, :length_type_id, :value, :subpackets, :version_sum
 
