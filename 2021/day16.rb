@@ -40,7 +40,6 @@ class Packet
   def initialize(bits)
     @bits = bits
     @subpackets = []
-    @version_sum = 0
 
     if @bits.size < 6
       @raw_type = -1
@@ -48,6 +47,7 @@ class Packet
     end
 
     @version = @bits.shift(3).join.to_i(2)
+    @version_sum = @version
     @raw_type = @bits.shift(3).join.to_i(2)
 
     if operator?
@@ -90,7 +90,6 @@ class Packet
       end
     end
 
-    @version_sum = version
     @version_sum += @subpackets.map(&:version_sum).sum
   end
 
