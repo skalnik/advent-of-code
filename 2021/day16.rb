@@ -9,19 +9,32 @@ class Day16
 
   def initialize(filename)
     @input = File.readlines(filename, chomp: true)[0]
+    bits = @input.chars.map { |c| c.to_i(16).to_s(2).rjust(4, "0") }.join.chars
+    @packet = Packet.new(bits)
   end
 
   def part_one
-    bits = @input.chars.map { |c| c.to_i(16).to_s(2).rjust(4, "0") }.join.chars
-    packet = Packet.new(bits)
-    packet.version_sum
+    @packet.version_sum
   end
 
   def part_two
+    @packet.value
   end
 end
 
 class Packet
+    @@TYPE_MAP = {
+      -1 => :corrupt,
+      0 => :sum,
+      1 => :product,
+      2 => :min,
+      3 => :max,
+      4 => :literal,
+      5 => :gt,
+      6 => :lt,
+      7 => :eq
+    }
+
   attr_reader :bits, :version, :length_type_id, :value, :subpackets, :version_sum
 
   def initialize(bits)
@@ -37,7 +50,7 @@ class Packet
     @version = @bits.shift(3).join.to_i(2)
     @raw_type = @bits.shift(3).join.to_i(2)
 
-    if type == :operator
+    if operator?
       @length_type_id = @bits.shift.to_i
     end
 
@@ -45,13 +58,15 @@ class Packet
   end
 
   def type
-    if @raw_type == -1
-      :corrupt
-    elsif @raw_type == 4
-      :literal
-    else
-      :operator
-    end
+    @@TYPE_MAP[@raw_type]
+  end
+
+  def operator?
+    type != :corrupt && type != :literal
+  end
+
+  def literal?
+    type == :literal
   end
 
   def process_data
@@ -82,6 +97,25 @@ class Packet
         (subpacket_count - 1).times do
           @subpackets << Packet.new(@subpackets.last.bits)
         end
+      end
+
+      values = @subpackets.map(&:value)
+
+      @value = case type
+      when :sum
+        values.sum
+      when :product
+        values.reduce(&:*)
+      when :min
+        values.min
+      when :max
+        values.max
+      when :gt
+        values[0] > values[1] ? 1 : 0
+      when :lt
+        values[0] < values[1] ? 1 : 0
+      when :eq
+        values[0] == values[1] ? 1 : 0
       end
     end
 
