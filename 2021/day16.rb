@@ -52,9 +52,11 @@ class Packet
 
     if operator?
       @length_type_id = @bits.shift.to_i
+
+      process_subpackets
     end
 
-    process_data
+    calculate_value
   end
 
   def type
@@ -69,8 +71,34 @@ class Packet
     type == :literal
   end
 
-  def process_data
-    if type == :literal
+  def process_subpackets
+    return if type == :literal
+
+    if @length_type_id == 0
+      bit_length = @bits.shift(15).join.to_i(2)
+      more_packet_bits = @bits.shift(bit_length)
+
+      @subpackets << Packet.new(more_packet_bits)
+      until @subpackets.last.bits.empty?
+        @subpackets << Packet.new(@subpackets.last.bits)
+      end
+    else
+      subpacket_count = @bits.shift(11).join.to_i(2)
+      @subpackets << Packet.new(@bits)
+      (subpacket_count - 1).times do
+        @subpackets << Packet.new(@subpackets.last.bits)
+      end
+    end
+
+    @version_sum = version
+    @version_sum += @subpackets.map(&:version_sum).sum
+  end
+
+  def calculate_value
+    values = @subpackets.map(&:value) unless @subpackets.empty?
+
+    @value = case type
+    when :literal
       value = []
 
       loop do
@@ -81,46 +109,22 @@ class Packet
         break if start.to_i == 0
       end
 
-      @value = value.flatten.join.to_i(2)
-    else
-      if @length_type_id == 0
-        bit_length = @bits.shift(15).join.to_i(2)
-        more_packet_bits = @bits.shift(bit_length)
-
-        @subpackets << Packet.new(more_packet_bits)
-        until @subpackets.last.bits.empty?
-          @subpackets << Packet.new(@subpackets.last.bits)
-        end
-      else
-        subpacket_count = @bits.shift(11).join.to_i(2)
-        @subpackets << Packet.new(@bits)
-        (subpacket_count - 1).times do
-          @subpackets << Packet.new(@subpackets.last.bits)
-        end
-      end
-
-      values = @subpackets.map(&:value)
-
-      @value = case type
-      when :sum
-        values.sum
-      when :product
-        values.reduce(&:*)
-      when :min
-        values.min
-      when :max
-        values.max
-      when :gt
-        values[0] > values[1] ? 1 : 0
-      when :lt
-        values[0] < values[1] ? 1 : 0
-      when :eq
-        values[0] == values[1] ? 1 : 0
-      end
+      value.flatten.join.to_i(2)
+    when :sum
+      values.sum
+    when :product
+      values.reduce(&:*)
+    when :min
+      values.min
+    when :max
+      values.max
+    when :gt
+      values[0] > values[1] ? 1 : 0
+    when :lt
+      values[0] < values[1] ? 1 : 0
+    when :eq
+      values[0] == values[1] ? 1 : 0
     end
-
-    @version_sum = version
-    @version_sum += @subpackets.map(&:version_sum).sum
   end
 
   def inspect
