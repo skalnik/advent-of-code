@@ -16,8 +16,8 @@ class Day17
     end
 
     @hits = []
-    (-200..@target[:x].max).each do |dx|
-      (@target[:y].min..200).each do |dy|
+    ((-@target[:x].max)..@target[:x].max).each do |dx|
+      (@target[:y].min..(-@target[:y].min)).each do |dy|
         results = simulate(dx, dy)
         @hits << results if results
       end
