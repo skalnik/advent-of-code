@@ -8,34 +8,96 @@ class Day21
   end
 
   def initialize(filename)
-    input = File.readlines(filename, chomp: true)
-    @players = []
-    if input.shift =~ /Player (\d) starting position: (\d+)/
-      @players << Player.new(id: $1, position: $2.to_i)
-    end
-
-    if input.shift =~ /Player (\d) starting position: (\d+)/
-      @players << Player.new(id: $1, position: $2.to_i)
-    end
+    @input = File.readlines(filename, chomp: true)
+    @games = {}
   end
 
   def part_one
+    players = []
+    input = @input.dup
+    if input.shift =~ /Player (\d) starting position: (\d+)/
+      players << Player.new(id: $1, position: $2.to_i)
+    end
+
+    if input.shift =~ /Player (\d) starting position: (\d+)/
+      players << Player.new(id: $1, position: $2.to_i)
+    end
+
     die = Die.new
-    until @players.any?(&:won?)
-      player = @players.shift
-      @players << player
+    until players.any?(&:won?)
+      player = players.shift
+      players << player
       player.move_forward(die.roll_three_times)
     end
 
-    @players.find(&:losing?).points * die.rolls
+    players.find(&:losing?).points * die.rolls
   end
 
   def part_two
+    players = []
+    input = @input.dup
+    if input.shift =~ /Player (\d) starting position: (\d+)/
+      players[$1.to_i - 1] = {
+        position: $2.to_i,
+        score: 0
+      }
+    end
+
+    if input.shift =~ /Player (\d) starting position: (\d+)/
+      players[$1.to_i - 1] = {
+        position: $2.to_i,
+        score: 0
+      }
+    end
+
+    game = {
+      players: players,
+      turn: 0
+    }
+
+    wins_from(game)
+  end
+
+
+  def wins_from(game)
+    return @games[game] if @games[game]
+
+    if game[:players].any? { |p| p[:score] >= 21 }
+      if game[:players].first[:score] >= 21
+        return [1, 0]
+      else
+        return [0, 1]
+      end
+    end
+
+    dirac_die = [1, 2, 3]
+    rolls = dirac_die.product(dirac_die, dirac_die)
+
+    wins = rolls.map do |roll|
+      new_game = {
+        players: [
+          game[:players].first.dup,
+          game[:players].last.dup
+        ],
+        turn: game[:turn].dup
+      }
+
+      current_player = new_game[:players][new_game[:turn]]
+      new_position = (((current_player[:position] + roll.sum) - 1) % 10) + 1
+      current_player[:position] = new_position
+      current_player[:score] += new_position
+      new_game[:turn] = (new_game[:turn] + 1) % 2
+
+      wins_from(new_game)
+    end
+
+    @games[game] = wins.transpose.map(&:sum)
+    @games[game]
   end
 end
 
 class Player
-  attr_reader :points, :id
+  attr_reader :points, :id, :position
 
   def initialize(position:, id:)
     @id = id
