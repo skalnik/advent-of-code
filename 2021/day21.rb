@@ -109,7 +109,6 @@ class Player
     @position += 1
 
     @position = 1 if @position > 10
-
   end
 
   def move_forward(spaces)

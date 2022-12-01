@@ -2,6 +2,7 @@
 
 class Day4
   def self.run(input_file)
+    
     puts "Part 1: #{Day4.new(input_file).part_one}"
     puts "Part 2: #{Day4.new(input_file).part_two}"
   end

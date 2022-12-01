@@ -12,30 +12,30 @@ class Day24
   end
 
   def part_one
-    ractors = []
-    20.times do
-      ractors << Ractor.new(@input.dup) do |input|
+    actors = []
+    parent = Ractor.current
+
+    10.times do
+      actors << Ractor.new(parent, @input.dup) do |parent, input|
         monad = ModelNumberChecker.new(input)
 
-        while number = Ractor.receive
+        while number = Ractor.recv
           puts "Checking #{number}"
-          if monad.valid? number.digits
-            puts "FOUND VALID NUMBER"
-            Ractor.yield number
+          if monad.valid? number
+            r.send number
           end
         end
       end
     end
 
-    99999999999999.downto(11111111111111).each do |model_number|
-      next if model_number.digits.include? 0
-
-      ractors[model_number % 10].send(model_number)
+    current_actor = 0
+    52926995999999.downto(11111111111111) do |number|
+      p actors[current_actor]
+      actors[current_actor] << number
+      current_actor = (current_actor + 1) % actors.size
     end
 
-    ractor, number = ractors.select(*ractors)
-
-    return number
+    return Ractor.recv
   end
 
   def part_two
@@ -46,7 +46,7 @@ class Program
   attr_reader :registers
 
   def initialize(input, program)
-    @input = input
+    @input = input.digits
     @program = program
     @registers = { w: 0, x: 0, y: 0, z: 0 }
   end
@@ -112,38 +112,38 @@ class ModelNumberChecker
     14.times do
       program.shift 4
       divisor = program.shift.split(' ').last.to_i
-      offset = program.shift.split(' ').last.to_i
+      add = program.shift.split(' ').last.to_i
       program.shift 9
-      offset_2 = program.shift.split(' ').last.to_i
+      add_2 = program.shift.split(' ').last.to_i
       program.shift 2
 
       @constants << {
         divisor: divisor,
-        offset: offset,
-        offset_2: offset_2
+        add: add,
+        add_2: add_2
       }
     end
   end
 
   def valid?(input)
-    @registers = { w: 0, z: 0 }
+    z = 0
 
-    input.each_with_index do |digit, index|
+    input.digits.reverse.each_with_index do |digit, index|
       constants = @constants[index]
 
-      @registers[:w] = digit
 
-      divided = @registers[:z] / constants[:divisor]
-      if (@registers[:z] % 26 + constants[:offset]) == @registers[:w]
-        @registers[:z] = divided
+      if digit == (z % 26) + constants[:add]
+        return false if constants[:add] < 0 
+
+        z /= constants[:divisor]
       else
-        @registers[:z] = divided
-        @registers[:z] *= 26
-        @registers[:z] += @registers[:w] + constants[:offset_2]
+        z /= constants[:divisor]
+        z *= 26
+        z += digit + constants[:add_2]
       end
     end
 
-    @registers[:z] == 0
+    z.zero?
   end
 end
 

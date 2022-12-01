@@ -11,12 +11,21 @@ class Day20
     input = File.readlines(filename, chomp: true)
     algorithm = input.shift.chars.map { |c| c == "#" }
     input.shift # empty line
-    @image = Image.new(data: input, algorithm: algorithm)
+
+    @image = Image.new(algorithm)
+
+    input.each_with_index do |line, x|
+      line.chars.each_with_index do |char, y|
+        @image.mark_pixel(x, y) if char == "#"
+      end
+    end
   end
 
   def part_one
-    puts @image.value_of(x: 3, y: 0)
-    puts @image.to_s
+    puts @image
+    puts enhanced = @image.enhance
+    puts enhanced = enhanced.enhance
+    enhanced.lit_pixels
   end
 
   def part_two
@@ -25,86 +34,75 @@ class Day20
 end
 
 class Image
-  def initialize(data: nil, image: nil, algorithm:)
-    @image = Hash.new(false)
+  BUFFER = 2
+
+  attr_reader :pixels, :algorithm
+
+  def initialize(algorithm)
     @algorithm = algorithm
 
-    if data
-      data.each_with_index do |line, x|
-        line.chars.each_with_index do |char, y|
-          @image[[x, y]] = true if char == "#"
-        end
+    @pixels = Hash.new(false)
+  end
+
+  def mark_pixel(x, y)
+    @pixels[[x, y]] = true
+  end
+
+  def max
+    [@pixels.keys.map(&:first).max, @pixels.keys.map(&:last).max]
+  end
+
+  def min
+    [@pixels.keys.map(&:first).min, @pixels.keys.map(&:last).min]
+  end
+
+  def value_at(x, y)
+    [
+      [x - 1, y - 1],
+      [x - 1, y    ],
+      [x - 1, y + 1],
+      [x    , y - 1],
+      [x    , y    ],
+      [x    , y + 1],
+      [x + 1, y - 1],
+      [x + 1, y    ],
+      [x + 1, y + 1],
+    ].map do |nx, ny|
+      @pixels[[nx, ny]] ? "1" : "0"
+    end.join.to_i(2)
+  end
+
+  def enhance
+    max_x, max_y = max
+    min_x, min_y = min
+    new_image = Image.new(@algorithm)
+
+    (min_x - BUFFER).upto(max_x + BUFFER).each do |x|
+      (min_y - BUFFER).upto(max_y + BUFFER).each do |y|
+        new_image.mark_pixel(x, y) if @algorithm[self.value_at(x, y)]
       end
-    elsif image
-      @image = image
     end
+
+    new_image
   end
 
-  def enhance_image
-    new_image = Hash.new(false)
-    max = max_dimensions
-
-    (0..max[:x]).each do |x|
-      (0..max[:y]).each do |y|
-        value = self.value_of(x: x, y: y)
-        new_image[[x, y]] = @algorithm[value]
-      end
-    end
-
-    Image.new(image: new_image, algorithm: @algorithm)
-  end
-
-  def value_of(x:, y:)
-    bit_count = 0
-    binary = [
-      { x: -1, y: -1 },
-      { x: -1, y:  0 },
-      { x: -1, y:  1 },
-      { x:  0, y: -1 },
-      { x:  0, y:  0 },
-      { x:  0, y:  1 },
-      { x:  1, y: -1 },
-      { x:  1, y:  0 },
-      { x:  1, y:  1 },
-    ].map do |diff|
-      nx = x + diff[:x]
-      ny = y + diff[:y]
-
-      print @image[[nx, ny]] ? "#" : "."
-      bit_count += 1
-      if bit_count % 3 == 0
-        puts
-      end
-
-      @image[[nx, ny]] ? 1 : 0
-    end.join
-
-    puts binary
-
-    binary.to_i(2)
-  end
-
-  def max_dimensions
-    {
-      x: @image.keys.map(&:first).max,
-      y: @image.keys.map(&:last).max
-    }
+  def lit_pixels
+    @pixels.values.count
   end
 
   def to_s
-    buffer = 0
     str = ""
-    max = max_dimensions
+    max_x, max_y = max
+    min_x, min_y = min
 
-    (-buffer..(max[:x] + buffer)).each do |x|
-      (-buffer..(max[:y] + buffer)).each do |y|
-        if @image[[x, y]]
+    (min_x - BUFFER).upto(max_x + BUFFER).each do |x|
+      (min_y - BUFFER).upto(max_y + BUFFER).each do |y|
+        if @pixels[[x, y]]
           str << "#"
         else
-           str << "."
+          str << "."
         end
       end
-
       str << "\n"
     end
 
