@@ -40,10 +40,10 @@ class Day5
   def parse_stacks
     seperator = @input.find_index('') - 1
     stack_count = @input[seperator].split(' ').last.to_i
-    stacks = Array.new(stack_count) { Array.new }
+    stacks = Array.new(stack_count) { [] }
     @input[0...seperator].each do |line|
       line.chars.each_slice(4).with_index do |(_, crate, _, _), i|
-        stacks[i] << crate if crate != " "
+        stacks[i] << crate if crate != ' '
       end
     end
 
