@@ -15,7 +15,8 @@ class Day5
     stacks = parse_stacks
     seperator = @input.find_index('') + 1
     @input[seperator..@input.length].each do |instruction|
-      (num, source, dest) = /move (\d+) from (\d+) to (\d+)/.match(instruction).to_a.slice(1..3).map(&:to_i)
+      (num, source, dest) = /move (\d+) from (\d+) to (\d+)/.
+        match(instruction).to_a.slice(1..3).map(&:to_i)
 
       crates = stacks[source - 1].pop(num)
       stacks[dest - 1].push(*crates.reverse)
@@ -28,7 +29,8 @@ class Day5
     stacks = parse_stacks
     seperator = @input.find_index('') + 1
     @input[seperator..@input.length].each do |instruction|
-      (num, source, dest) = /move (\d+) from (\d+) to (\d+)/.match(instruction).to_a.slice(1..3).map(&:to_i)
+      (num, source, dest) = /move (\d+) from (\d+) to (\d+)/.
+        match(instruction).to_a.slice(1..3).map(&:to_i)
 
       crates = stacks[source - 1].pop(num)
       stacks[dest - 1].push(*crates)
