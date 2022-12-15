@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-# 4902 too high
-
 class Day13
   def self.run(input_file)
     runner = Day13.new(input_file)
@@ -71,9 +69,9 @@ class Day13
     compare = right <=> left
     if debug
       if compare.positive?
-        puts "Right order"
+        puts 'Right order'
       elsif compare.negative?
-        puts "Wrong order"
+        puts 'Wrong order'
       end
     end
 
